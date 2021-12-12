@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/c/Users/cmbak/OneDrive/Desktop/Semester 5/CS 4740/A Bit of Studying/main.cpp
+fstream
+-
+iostream
+-
+map
+-
+memory
+-
+random
+-
+string
+-
+utility
+-
+vector
+-
+
