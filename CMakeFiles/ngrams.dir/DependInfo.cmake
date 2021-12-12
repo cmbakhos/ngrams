@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/mnt/c/Users/cmbak/OneDrive/Desktop/Semester 5/CS 4740/A Bit of Studying/main.cpp" "/mnt/c/Users/cmbak/OneDrive/Desktop/Semester 5/CS 4740/A Bit of Studying/CMakeFiles/ngrams.dir/main.cpp.o"
+  "/mnt/c/Users/cmbak/OneDrive/Desktop/Semester 5/CS 4740/ngrams/main.cpp" "/mnt/c/Users/cmbak/OneDrive/Desktop/Semester 5/CS 4740/ngrams/CMakeFiles/ngrams.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

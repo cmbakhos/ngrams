@@ -251,46 +251,112 @@ int main() {
 	}
 	
 	// Calculate now the ngram counts
-	std::map<Unigram, std::pair<unsigned int, std::shared_ptr<Unigram>>> unigramDictionary;
+	std::map<Unigram, unsigned int> unigramDictionary;
 	std::map<Bigram, unsigned int> bigramDictionary;
 	std::map<Trigram, unsigned int> trigramDictionary;
 	
 	for( auto it = std::begin( words ); it != std::end( words ); ++it ) {
+		// Unigrams
 		///////////////////////////////////////////////////////////////
-		// Create a smart pointer to unigram on the heap
-		std::shared_ptr<Unigram> sharedPointer( new Unigram );
-		// Set unigram.one to the iterator dereferenced
-		sharedPointer->one = *it;
-		Unigram unigram = *sharedPointer;
-		// Increment the count of the unigram
-		unigramDictionary[unigram].first++;
-		// Check if there is not yet an entry for unigram. If there is not, the pointer need be updated
-		if( !unigramDictionary.count(unigram) )
-			unigramDictionary[unigram].second = sharedPointer;
+		Unigram unigram;
+		unigram.one = *it;
+		unigramDictionary[unigram]++;
 		///////////////////////////////////////////////////////////////
 		
-		// Calculate bigram occurrences
+		// Bigrams
+		///////////////////////////////////////////////////////////////
 		Bigram bigram;
 		bigram.one = *it;
 		bigram.two = *std::next(it);
 		bigramDictionary[bigram]++;
+		///////////////////////////////////////////////////////////////
 		
-		// Calculate trigram occurrences
+		// Trigrams
+		///////////////////////////////////////////////////////////////
 		Trigram trigram;
 		trigram.one = *it;
 		trigram.two = *std::next(it);
 		trigram.three = *std::next(it, 2);
 		trigramDictionary[trigram]++;
+		///////////////////////////////////////////////////////////////
 	}
 	
-	// Define vector of dictionary iterators so we can access randomly
-	// std::vector<std::pair<const Unigram, unsigned int>*> unigramPointers;
-	// unsigned int iteratorCounter = 0;
 	
-	// for( auto it = std::begin( unigramDictionary ); it != std::end( unigramDictionary ); ++it ) {
-		// iteratorCounter++;
-		// unigramPointers[iteratorCounter] = &(*it);
-	// }
+	
+	
+	
+	
+	
+	
+	
+	/*
+	// Calculate now the ngram counts
+	std::map<Unigram, std::pair<unsigned int, std::shared_ptr<Unigram>>> unigramDictionary;
+	std::map<Bigram, std::pair<unsigned int, std::shared_ptr<Bigram>>> bigramDictionary;
+	std::map<Trigram, std::pair<unsigned int, std::shared_ptr<Trigram>>> trigramDictionary;
+	
+	for( auto it = std::begin( words ); it != std::end( words ); ++it ) {
+		// Unigrams
+		///////////////////////////////////////////////////////////////
+		// Create a smart pointer to unigram on the heap
+		std::shared_ptr<Unigram> sharedUnigramPointer( new Unigram );
+		// Set unigram.one to the iterator dereferenced
+		sharedUnigramPointer->one = *it;
+		Unigram unigram = *sharedUnigramPointer;
+		// Increment the count of the unigram
+		unigramDictionary[unigram].first++;
+		// Check if there is not yet an entry for unigram. If there is not, the pointer need be updated
+		if( !unigramDictionary.count(unigram) ) {
+			unigramDictionary[unigram].second = sharedUnigramPointer;
+		}
+		///////////////////////////////////////////////////////////////
+		
+		// Bigrams
+		///////////////////////////////////////////////////////////////
+		// Create a smart pointer to bigram on the heap
+		std::shared_ptr<Bigram> sharedBigramPointer( new Bigram );
+		// Set bigram.one, bigram.two to the iterator dereferenced
+		sharedBigramPointer->one = *it;
+		sharedBigramPointer->two = *std::next(it);
+		Bigram bigram = *sharedBigramPointer;
+		// Increment the count of the bigram
+		bigramDictionary[bigram].first++;
+		// Check if there is not yet an entry for bigram. If there is not, the pointer need be updated
+		if( !bigramDictionary.count(bigram) ) {
+			bigramDictionary[bigram].second = sharedBigramPointer;
+		}
+		///////////////////////////////////////////////////////////////
+		
+		// Trigrams
+		///////////////////////////////////////////////////////////////
+		// Create a smart pointer to trigram on the heap
+		std::shared_ptr<Trigram> sharedTrigramPointer( new Trigram );
+		// Set trigram.one, trigram.two, trigram.three to the iterator dereferenced
+		sharedTrigramPointer->one = *it;
+		sharedTrigramPointer->two = *std::next(it);
+		sharedTrigramPointer->three = *std::next(it, 2);
+		Trigram trigram = *sharedTrigramPointer;
+		// Increment the count of the trigram
+		trigramDictionary[trigram].first++;
+		// Check if there is not yet an entry for trigram. If there is not, the pointer need be updated
+		if( !trigramDictionary.count(trigram) ) {
+			trigramDictionary[trigram].second = sharedTrigramPointer;
+		}
+		///////////////////////////////////////////////////////////////
+	}
+	// Now that maps are taken care of, we need to take care of vectors
+	// Define vector of dictionary iterators so we can access randomly
+	std::vector<std::pair<const Unigram, std::pair<unsigned int, std::shared_ptr<Unigram>>>> unigramPointers;
+	unsigned int iteratorCounter {0};
+	for( auto it = std::begin( unigramDictionary ); it != std::end( unigramDictionary ); ++it ) {
+		iteratorCounter++;
+		unigramPointers.push_back( *it );
+	}
+	
+	for( unsigned int i = 0; i < 10; i++ ) {
+		std::cout << (unigramPointers[iteratorCounter].second.second)->one << '\n';
+	}
+	*/
 	
 	//std::cout << unigramPointers[0]->first.one << '\n';
 	
@@ -310,15 +376,15 @@ int main() {
 	}
 	
 	// for( auto it = std::begin( unigramDictionary ); it != std::end( unigramDictionary ); ++it ) {
-		// std::cout << it->first.one << " : " << it->second << '\n';
+		// std::cout << it->first.one << " : " << it->second.first << '\n';
 	// }
 	
 	// for( auto it = std::begin( bigramDictionary ); it != std::end( bigramDictionary ); ++it ) {
-		// std::cout << it->first.one << " " << it->first.two << " : " << it->second << '\n';
+		// std::cout << it->first.one << " " << it->first.two << " : " << it->second.first << '\n';
 	// }
 	
 	// for( auto it = std::begin( trigramDictionary ); it != std::end( trigramDictionary ); ++it ) {
-		// std::cout << it->first.one << " " << it->first.two << " " << it->first.three << " : " << it->second << '\n';
+		// std::cout << it->first.one << " " << it->first.two << " " << it->first.three << " : " << it->second.first << '\n';
 	// }
 	
 	std::cout << "Unigram entries: " << unigramDictionary.size() << ", bigram entries: " << bigramDictionary.size() << ", trigram entries: " << trigramDictionary.size() << '\n';

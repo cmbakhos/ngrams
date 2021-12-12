@@ -1,3 +1,3 @@
-/mnt/c/Users/cmbak/OneDrive/Desktop/Semester 5/CS 4740/A Bit of Studying/CMakeFiles/rebuild_cache.dir
-/mnt/c/Users/cmbak/OneDrive/Desktop/Semester 5/CS 4740/A Bit of Studying/CMakeFiles/edit_cache.dir
-/mnt/c/Users/cmbak/OneDrive/Desktop/Semester 5/CS 4740/A Bit of Studying/CMakeFiles/ngrams.dir
+/mnt/c/Users/cmbak/OneDrive/Desktop/Semester 5/CS 4740/ngrams/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/cmbak/OneDrive/Desktop/Semester 5/CS 4740/ngrams/CMakeFiles/edit_cache.dir
+/mnt/c/Users/cmbak/OneDrive/Desktop/Semester 5/CS 4740/ngrams/CMakeFiles/ngrams.dir
