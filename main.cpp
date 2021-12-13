@@ -335,23 +335,23 @@ int main() {
 	std::discrete_distribution<int> bigramDistribution( bigramFrequencyVector.begin(), bigramFrequencyVector.end() );
 	std::discrete_distribution<int> trigramDistribution( trigramFrequencyVector.begin(), trigramFrequencyVector.end() );
 	
+	/*
 	// Unigram generator. Absolutely horrible
-	// for( int i = 0; i < 300; i++ ) {
-		// std::cout << unigramVector[unigramDistribution( generator )].one << '\n';
-	// }
+	for( int i = 0; i < 300; i++ ) {
+		std::cout << unigramVector[unigramDistribution( generator )].one << '\n';
+	}
+	*/
 	
-	
-	
-	
-	
-	// Bigram generator. Start by picking a random unigram.
-	std::string previousToken = unigramVector[unigramDistribution( generator )].one;
+	// Bigram generator. Slightly better. Though, like the trigram, this gets in a loop. Oh well. Start by picking a random unigram.
+	std::string previousToken;
+	previousToken = "i";
+	//std::string previousToken = unigramVector[unigramDistribution( generator )].one;
 	std::cout << previousToken << " ";
-	
 	for( int i = 0; i < 300; i++ ) {
 		// From here, we want a list of probabilities of the words that can follow that one.
 		std::vector<Bigram> bigramVectorFollowing;
 		std::vector<unsigned int> bigramFrequencyVectorFollowing;
+		
 		for( auto it = std::begin( bigramDictionary ); it != std::end( bigramDictionary ); it++ ) {
 			std::pair<const Bigram, unsigned int> bigramEntry = *it;
 			if( bigramEntry.first.one == previousToken ) {
@@ -362,96 +362,44 @@ int main() {
 		
 		// Distribution for bigrams based on that probability
 		std::discrete_distribution<int> bigramDistributionFollowing( bigramFrequencyVectorFollowing.begin(), bigramFrequencyVectorFollowing.end() );
-	
+		
+		// Actually generate and print the token
 		unsigned int bigramIndex = bigramDistributionFollowing( generator );
 		previousToken = bigramVectorFollowing[bigramIndex].two;
 		std::cout << previousToken << " ";
 	}
-	
 	std::cout << '\n';
 	
-	
 	/*
-	// Calculate now the ngram counts
-	std::map<Unigram, std::pair<unsigned int, std::shared_ptr<Unigram>>> unigramDictionary;
-	std::map<Bigram, std::pair<unsigned int, std::shared_ptr<Bigram>>> bigramDictionary;
-	std::map<Trigram, std::pair<unsigned int, std::shared_ptr<Trigram>>> trigramDictionary;
-	
-	for( auto it = std::begin( words ); it != std::end( words ); ++it ) {
-		// Unigrams
-		///////////////////////////////////////////////////////////////
-		// Create a smart pointer to unigram on the heap
-		std::shared_ptr<Unigram> sharedUnigramPointer( new Unigram );
-		// Set unigram.one to the iterator dereferenced
-		sharedUnigramPointer->one = *it;
-		Unigram unigram = *sharedUnigramPointer;
-		// Increment the count of the unigram
-		unigramDictionary[unigram].first++;
-		// Check if there is not yet an entry for unigram. If there is not, the pointer need be updated
-		if( !unigramDictionary.count(unigram) ) {
-			unigramDictionary[unigram].second = sharedUnigramPointer;
-		}
-		///////////////////////////////////////////////////////////////
+	// Trigram generator. Probably best. Definitely not best. Gets caught in a loop. Bigram was best. Start by picking a random bigram.
+	Bigram previousBigram = bigramVector[bigramDistribution( generator )];
+	std::cout << previousBigram.one << " " << previousBigram.two << " ";
+	for( int i = 0; i < 300; i++ ) {
+		// We want a list of probabilities of the words that can follow this bigram.
+		std::vector<Trigram> trigramVectorFollowing;
+		std::vector<unsigned int> trigramFrequencyVectorFollowing;
 		
-		// Bigrams
-		///////////////////////////////////////////////////////////////
-		// Create a smart pointer to bigram on the heap
-		std::shared_ptr<Bigram> sharedBigramPointer( new Bigram );
-		// Set bigram.one, bigram.two to the iterator dereferenced
-		sharedBigramPointer->one = *it;
-		sharedBigramPointer->two = *std::next(it);
-		Bigram bigram = *sharedBigramPointer;
-		// Increment the count of the bigram
-		bigramDictionary[bigram].first++;
-		// Check if there is not yet an entry for bigram. If there is not, the pointer need be updated
-		if( !bigramDictionary.count(bigram) ) {
-			bigramDictionary[bigram].second = sharedBigramPointer;
+		for( auto it = std::begin( trigramDictionary ); it != std::end( trigramDictionary ); ++it ) {
+			std::pair<const Trigram, unsigned int> trigramEntry = *it;
+			if( ( trigramEntry.first.one == previousBigram.one ) && ( trigramEntry.first.two == previousBigram.two ) ) {
+				trigramVectorFollowing.push_back( trigramEntry.first );
+				trigramFrequencyVectorFollowing.push_back( trigramEntry.second );
+			}
 		}
-		///////////////////////////////////////////////////////////////
 		
-		// Trigrams
-		///////////////////////////////////////////////////////////////
-		// Create a smart pointer to trigram on the heap
-		std::shared_ptr<Trigram> sharedTrigramPointer( new Trigram );
-		// Set trigram.one, trigram.two, trigram.three to the iterator dereferenced
-		sharedTrigramPointer->one = *it;
-		sharedTrigramPointer->two = *std::next(it);
-		sharedTrigramPointer->three = *std::next(it, 2);
-		Trigram trigram = *sharedTrigramPointer;
-		// Increment the count of the trigram
-		trigramDictionary[trigram].first++;
-		// Check if there is not yet an entry for trigram. If there is not, the pointer need be updated
-		if( !trigramDictionary.count(trigram) ) {
-			trigramDictionary[trigram].second = sharedTrigramPointer;
-		}
-		///////////////////////////////////////////////////////////////
+		// Distribution for trigrams based on that probability
+		std::discrete_distribution<int> trigramDistributionFollowing( trigramFrequencyVectorFollowing.begin(), trigramFrequencyVectorFollowing.begin() );
+		
+		// Actually generate and print the token
+		unsigned int trigramIndex = trigramDistributionFollowing( generator );
+		previousBigram.one = trigramVectorFollowing[trigramIndex].two;
+		previousBigram.two = trigramVectorFollowing[trigramIndex].three;
+		std::cout << previousBigram.two << " ";
 	}
-	// Now that maps are taken care of, we need to take care of vectors
-	// Define vector of dictionary iterators so we can access randomly
-	std::vector<std::pair<const Unigram, std::pair<unsigned int, std::shared_ptr<Unigram>>>> unigramPointers;
-	unsigned int iteratorCounter {0};
-	for( auto it = std::begin( unigramDictionary ); it != std::end( unigramDictionary ); ++it ) {
-		iteratorCounter++;
-		unigramPointers.push_back( *it );
-	}
-	
-	for( unsigned int i = 0; i < 10; i++ ) {
-		std::cout << (unigramPointers[iteratorCounter].second.second)->one << '\n';
-	}
+	std::cout << '\n';
 	*/
 	
-	//std::cout << unigramPointers[0]->first.one << '\n';
-	
-	
-	
-	// std::vector<std::pair<Bigram, unsigned int>> bigramDictionary;
-	// std::vector<std::pair<Trigram, unsigned int>> trigramDictionary;
-	
-	
-	for( int i = 0; i < 10; i++ ) {
-		
-	}
-	
+	// Print list of words with their frequencies
 	// for( auto it = std::begin( unigramDictionary ); it != std::end( unigramDictionary ); ++it ) {
 		// std::cout << it->first.one << " : " << it->second.first << '\n';
 	// }
