@@ -304,7 +304,22 @@ int main() {
 	for( auto it = std::begin( bigramDictionary ); it != std::end( bigramDictionary ); ++it ) {
 		std::pair<const Bigram, unsigned int> bigramEntry = *it;
 		bigramVector.push_back( bigramEntry.first );
-		bigramFrequencyVector.push_back( bigramEntry.second );
+		
+		// Bigram entry occurences
+		unsigned int bigramOccurence = bigramEntry.second;
+		
+		// Bigram first word
+		std::string bigramFirstWord = bigramEntry.first.one;
+		
+		// Unigram entry based off bigram first word
+		Unigram unigramEntry;
+		unigramEntry.one = bigramFirstWord;
+		
+		// Unigram entry occurence based off bigram first word
+		unsigned int unigramOccurence = unigramDictionary[unigramEntry];
+		
+		// Create frequency vector based off unigram entry occurence and bigram first word occurence
+		bigramFrequencyVector.push_back( (double) bigramOccurence / (float) unigramOccurence );
 	}
 	
 	for( auto it = std::begin( trigramDictionary ); it != std::end( trigramDictionary ); ++it ) {
@@ -320,12 +335,40 @@ int main() {
 	std::discrete_distribution<int> bigramDistribution( bigramFrequencyVector.begin(), bigramFrequencyVector.end() );
 	std::discrete_distribution<int> trigramDistribution( trigramFrequencyVector.begin(), trigramFrequencyVector.end() );
 	
+	// Unigram generator. Absolutely horrible
+	// for( int i = 0; i < 300; i++ ) {
+		// std::cout << unigramVector[unigramDistribution( generator )].one << '\n';
+	// }
+	
+	
+	
+	
+	
+	// Bigram generator. Start by picking a random unigram.
+	std::string previousToken = unigramVector[unigramDistribution( generator )].one;
+	std::cout << previousToken << " ";
+	
 	for( int i = 0; i < 300; i++ ) {
-		std::cout << unigramVector[unigramDistribution( generator )].one << '\n';
+		// From here, we want a list of probabilities of the words that can follow that one.
+		std::vector<Bigram> bigramVectorFollowing;
+		std::vector<unsigned int> bigramFrequencyVectorFollowing;
+		for( auto it = std::begin( bigramDictionary ); it != std::end( bigramDictionary ); it++ ) {
+			std::pair<const Bigram, unsigned int> bigramEntry = *it;
+			if( bigramEntry.first.one == previousToken ) {
+				bigramVectorFollowing.push_back( bigramEntry.first );
+				bigramFrequencyVectorFollowing.push_back( bigramEntry.second );
+			}
+		}
+		
+		// Distribution for bigrams based on that probability
+		std::discrete_distribution<int> bigramDistributionFollowing( bigramFrequencyVectorFollowing.begin(), bigramFrequencyVectorFollowing.end() );
+	
+		unsigned int bigramIndex = bigramDistributionFollowing( generator );
+		previousToken = bigramVectorFollowing[bigramIndex].two;
+		std::cout << previousToken << " ";
 	}
 	
-	
-	
+	std::cout << '\n';
 	
 	
 	/*
