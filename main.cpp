@@ -250,40 +250,79 @@ int main() {
 		}
 	}
 	
-	// Calculate now the ngram counts
+	// Create a few dictionaries (maps) for the ngrams
 	std::map<Unigram, unsigned int> unigramDictionary;
 	std::map<Bigram, unsigned int> bigramDictionary;
 	std::map<Trigram, unsigned int> trigramDictionary;
 	
+	// Create a few vectors for the ngrams
+	std::vector<Unigram> unigramVector;
+	std::vector<Bigram> bigramVector;
+	std::vector<Trigram> trigramVector;
+	
+	// Loop through all of the parsed words
 	for( auto it = std::begin( words ); it != std::end( words ); ++it ) {
 		// Unigrams
-		///////////////////////////////////////////////////////////////
 		Unigram unigram;
 		unigram.one = *it;
+		if( !unigramDictionary.count( unigram ) ) {
+			//std::cout << "no" << '\n';
+		}
 		unigramDictionary[unigram]++;
-		///////////////////////////////////////////////////////////////
 		
 		// Bigrams
-		///////////////////////////////////////////////////////////////
 		Bigram bigram;
 		bigram.one = *it;
 		bigram.two = *std::next(it);
+		if( !bigramDictionary.count( bigram ) ) {
+			bigramVector.push_back( bigram );
+		}
 		bigramDictionary[bigram]++;
-		///////////////////////////////////////////////////////////////
 		
 		// Trigrams
-		///////////////////////////////////////////////////////////////
 		Trigram trigram;
 		trigram.one = *it;
 		trigram.two = *std::next(it);
 		trigram.three = *std::next(it, 2);
+		if( !trigramDictionary.count( trigram ) ) {
+			trigramVector.push_back( trigram );
+		}
 		trigramDictionary[trigram]++;
-		///////////////////////////////////////////////////////////////
 	}
 	
+	// Create ngram vectors and ngram frequency vectors for each unigram
+	std::vector<unsigned int> unigramFrequencyVector;
+	std::vector<unsigned int> bigramFrequencyVector;
+	std::vector<unsigned int> trigramFrequencyVector;
 	
+	for( auto it = std::begin( unigramDictionary ); it != std::end( unigramDictionary ); ++it ) {
+		std::pair<const Unigram, unsigned int> unigramEntry = *it;
+		unigramVector.push_back( unigramEntry.first );
+		unigramFrequencyVector.push_back( unigramEntry.second );
+	}
 	
+	for( auto it = std::begin( bigramDictionary ); it != std::end( bigramDictionary ); ++it ) {
+		std::pair<const Bigram, unsigned int> bigramEntry = *it;
+		bigramVector.push_back( bigramEntry.first );
+		bigramFrequencyVector.push_back( bigramEntry.second );
+	}
 	
+	for( auto it = std::begin( trigramDictionary ); it != std::end( trigramDictionary ); ++it ) {
+		std::pair<const Trigram, unsigned int> trigramEntry = *it;
+		trigramVector.push_back( trigramEntry.first );
+		trigramFrequencyVector.push_back( trigramEntry.second );
+	}
+	
+	// Create random things for generating a sequence of words
+	std::default_random_engine generator;
+	
+	std::discrete_distribution<int> unigramDistribution( unigramFrequencyVector.begin(), unigramFrequencyVector.end() );
+	std::discrete_distribution<int> bigramDistribution( bigramFrequencyVector.begin(), bigramFrequencyVector.end() );
+	std::discrete_distribution<int> trigramDistribution( trigramFrequencyVector.begin(), trigramFrequencyVector.end() );
+	
+	for( int i = 0; i < 300; i++ ) {
+		std::cout << unigramVector[unigramDistribution( generator )].one << '\n';
+	}
 	
 	
 	
@@ -365,11 +404,6 @@ int main() {
 	// std::vector<std::pair<Bigram, unsigned int>> bigramDictionary;
 	// std::vector<std::pair<Trigram, unsigned int>> trigramDictionary;
 	
-	// Create random things for generating a sequence of words
-	// std::default_random_engine generator;
-	// std::discrete_distribution<int> unigramDistribution;
-	// std::discrete_distribution<int> bigramDistribution;
-	// std::discrete_distribution<int> trigramDistribution;
 	
 	for( int i = 0; i < 10; i++ ) {
 		
